@@ -1,3 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Panel de Indicadores</title>
+
+<style>
+body{
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background:#f4f6f9;
+  margin:0;
+  padding:20px;
+}
+
+h2{
+  text-align:center;
+  color:#2c3e50;
+}
+
+input, select{
+  padding:10px;
+  margin:8px 5px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.controles{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.table-container{
+  overflow:auto;
+  max-height:65vh;
+  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  background:white;
+}
+
+table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:12px;
+}
+
+th{
+  background:#34495e;
+  color:white;
+  padding:10px;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+td{
+  padding:8px;
+  text-align:center;
+  border-bottom:1px solid #eee;
+}
+
+tr:nth-child(even){ background:#f9fbfd; }
+tr:hover{ background:#e8f4ff; }
+
+.kpi-verde{ background:#d4edda; color:#155724; font-weight:bold; }
+.kpi-amarillo{ background:#fff3cd; color:#856404; font-weight:bold; }
+.kpi-rojo{ background:#f8d7da; color:#721c24; font-weight:bold; }
+
+#resumenKPI{
+  background:white;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📊 Panel de Indicadores</h2>
+
+<div class="controles">
+  <input type="text" id="filtro" placeholder="Buscar...">
+  <select id="vista">
+    <option value="dia">Vista Diaria</option>
+    <option value="semana">Vista Semanal</option>
+    <option value="mes">Vista Mensual</option>
+  </select>
+  <select id="mesFiltro">
+    <option value="">Todos los meses</option>
+  </select>
+</div>
+
+<div id="resumenKPI"></div>
+
+<div class="table-container">
+<table>
+  <thead></thead>
+  <tbody></tbody>
+</table>
+</div>
+
 <script>
 const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv__z4dmUZOol3wAk_xfvxVHrJHFuaP3dKX8M9S-j6dd3WjUz0iCpxGnIOzpq2s1oOKPWGf5q45Yox/pub?output=csv";
 
@@ -99,8 +202,7 @@ function render(filtrado){
   });
   calcularResumen(filtrado);
 }
-
-/* ✅ NUEVA LÓGICA CORRECTA SEGÚN TUS COLUMNAS */
+// aplicamos filtros
 function aplicarFiltros(){
   const texto = filtro.value.toLowerCase();
   const vista = vistaSel.value;
@@ -115,7 +217,7 @@ function aplicarFiltros(){
     // Filtro por mes elegido
     if(mesElegido && !colMes.includes(mesElegido)) return false;
 
-    // Vista diaria → solo cuando DIA es día real
+    // Vista diaria → solo cuando DIA tiene número real
     if(vista === "dia"){
       if(colDia.includes("Total")) return false;
     }
@@ -137,6 +239,9 @@ function aplicarFiltros(){
   render(resultado);
 }
 
+
+  
+
 const filtro=document.getElementById("filtro");
 const vistaSel=document.getElementById("vista");
 const mesSel=document.getElementById("mesFiltro");
@@ -149,7 +254,5 @@ render(datos);
 });
 </script>
 
-
 </body>
 </html>
-
