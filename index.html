@@ -117,23 +117,59 @@ fetch(url)
 
   thead.innerHTML = "<tr>" + encabezados.map(h => `<th>${h}</th>`).join("") + "</tr>";
 
- function colorKPI(valor){
+  // APLICAMOS CAMBIO DE COLOR POR ESTILO
+function reglaPorColumna(encabezado, valor){
   if(!valor.includes("%")) return "";
 
   const num = parseFloat(valor.replace("%","").trim());
+  encabezado = encabezado.trim();
 
-  if(num >= 85) return "kpi-verde";
-  if(num >= 70) return "kpi-amarillo";
+  // REGLAS PERSONALIZADAS
+  const reglas = {
+    "% FCR 1dia": 90,
+    "%FCR 7dia": 90,
+    "% Adher General": 80,
+    "% Descto": 80,
+    "% Rein.": 5,   // menos es mejor
+    "% Ef. BAF": 80,
+    "% Argumentario": 85,
+    "% Oferta": 85,
+    "% Adh Capl": 25,   // menos es mejor
+    "%adh Oferta 0": 20,   // menos es mejor
+    "%adh Oferta 1": 80,
+    "%adh Oferta 2": 80,
+    "%adh Oferta 3": 80,
+    "% VS Atendidas": 90,
+    "% Baja Parc.": 4,   // menos es mejor
+    "% Short Call": 5,   // aquí es al revés (menos es mejor)
+    "% Transf.": 10       // menos es mejor
+  };
+
+  let meta = reglas[encabezado];
+
+  if(meta === undefined) meta = 85; // regla general
+
+  // Para métricas donde MENOS es mejor
+  if(encabezado === "% Short Call" || encabezado === "% Transf." || encabezado === "% Adh Capl" || encabezado === "% Rein." || encabezado === "%adh Oferta 0" || encabezado === "% Baja Parc."){
+    if(num <= meta) return "kpi-verde";
+    if(num <= meta + 5) return "kpi-amarillo";
+    return "kpi-rojo";
+  }
+
+  // Para métricas normales (más es mejor)
+  if(num >= meta) return "kpi-verde";
+  if(num >= meta - 10) return "kpi-amarillo";
   return "kpi-rojo";
 }
-
-function render(filtrado){
+// CAMBIOS EN EL RENDER
+  function render(filtrado){
   tbody.innerHTML="";
   filtrado.forEach(fila=>{
     let filaHTML = "<tr>";
 
-    fila.forEach(celda=>{
-      const clase = colorKPI(celda);
+    fila.forEach((celda, i)=>{
+      const encabezado = encabezados[i];
+      const clase = reglaPorColumna(encabezado, celda);
       filaHTML += `<td class="${clase}">${celda}</td>`;
     });
 
@@ -142,7 +178,9 @@ function render(filtrado){
   });
 }
 
-
+  
+// despues de aplicar cambio de color
+  
   render(datos);
 
   document.getElementById("filtro").addEventListener("keyup", e=>{
@@ -159,4 +197,5 @@ function render(filtrado){
 
 </body>
 </html>
+
 
