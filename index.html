@@ -132,13 +132,13 @@ function reglaPorColumna(encabezado, valor){
     "% Descto": 80,
     "% Rein.": 5,   // menos es mejor
     "% Ef. BAF": 80,
-    "% Argumentario": 85,
-    "% Oferta": 85,
+    "% Argumentario": 23,
+    "% Oferta": 80,
     "% Adh Capl": 25,   // menos es mejor
     "%adh Oferta 0": 20,   // menos es mejor
-    "%adh Oferta 1": 80,
-    "%adh Oferta 2": 80,
-    "%adh Oferta 3": 80,
+    "%adh Oferta 1": 12,  // menos es mejor
+    "%adh Oferta 2": 23,  // menos es mejor
+    "%adh Oferta 3": 55,  // menos es mejor
     "% VS Atendidas": 90,
     "% Baja Parc.": 4,   // menos es mejor
     "% Short Call": 5,   // aquí es al revés (menos es mejor)
@@ -150,7 +150,7 @@ function reglaPorColumna(encabezado, valor){
   if(meta === undefined) meta = 85; // regla general
 
   // Para métricas donde MENOS es mejor
-  if(encabezado === "% Short Call" || encabezado === "% Transf." || encabezado === "% Adh Capl" || encabezado === "% Rein." || encabezado === "%adh Oferta 0" || encabezado === "% Baja Parc."){
+  if(encabezado === "% Short Call" || encabezado === "% Transf." || encabezado === "% Adh Capl" || encabezado === "% Rein." || encabezado === "%adh Oferta 0" || encabezado === "% Baja Parc." || encabezado === "% Argumentario" || encabezado === "%adh Oferta 1" || encabezado === "%adh Oferta 2" || encabezado === "%adh Oferta 3"){
     if(num <= meta) return "kpi-verde";
     if(num <= meta + 5) return "kpi-amarillo";
     return "kpi-rojo";
@@ -197,5 +197,6 @@ function reglaPorColumna(encabezado, valor){
 
 </body>
 </html>
+
 
 
