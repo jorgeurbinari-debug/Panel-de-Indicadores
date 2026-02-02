@@ -64,7 +64,29 @@ tr:nth-child(even){
 tr:hover{
   background:#e8f4ff;
 }
+  .kpi-verde{
+  background:#d4edda;
+  color:#155724;
+  font-weight:bold;
+}
+
+.kpi-amarillo{
+  background:#fff3cd;
+  color:#856404;
+  font-weight:bold;
+}
+
+.kpi-rojo{
+  background:#f8d7da;
+  color:#721c24;
+  font-weight:bold;
+}
+
 </style>
+
+
+
+  
 </head>
 
 <body>
@@ -95,12 +117,31 @@ fetch(url)
 
   thead.innerHTML = "<tr>" + encabezados.map(h => `<th>${h}</th>`).join("") + "</tr>";
 
-  function render(filtrado){
-    tbody.innerHTML="";
-    filtrado.forEach(fila=>{
-      tbody.innerHTML += "<tr>" + fila.map(c=>`<td>${c}</td>`).join("") + "</tr>";
+ function colorKPI(valor){
+  if(!valor.includes("%")) return "";
+
+  const num = parseFloat(valor.replace("%","").trim());
+
+  if(num >= 85) return "kpi-verde";
+  if(num >= 70) return "kpi-amarillo";
+  return "kpi-rojo";
+}
+
+function render(filtrado){
+  tbody.innerHTML="";
+  filtrado.forEach(fila=>{
+    let filaHTML = "<tr>";
+
+    fila.forEach(celda=>{
+      const clase = colorKPI(celda);
+      filaHTML += `<td class="${clase}">${celda}</td>`;
     });
-  }
+
+    filaHTML += "</tr>";
+    tbody.innerHTML += filaHTML;
+  });
+}
+
 
   render(datos);
 
@@ -118,3 +159,4 @@ fetch(url)
 
 </body>
 </html>
+
