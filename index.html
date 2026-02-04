@@ -96,14 +96,24 @@ fetch(url)
   };
 
   /* ===== FECHA MÁS RECIENTE ===== */
-  const fechas = datos
-    .map(f => f[IDX.DIA])
-    .filter(f => f && !f.toLowerCase().includes("total"))
-    .map(f => new Date(f));
+function parseFechaLatam(fechaStr){
+  // Espera formato dd/mm/yyyy
+  const partes = fechaStr.split("/");
+  if(partes.length !== 3) return null;
+  return new Date(partes[2], partes[1]-1, partes[0]);
+}
 
-  const fechaMax = new Date(Math.max(...fechas));
-  document.getElementById("fechaActualizacion").textContent =
-    `DATOS ACTUALIZADOS AL DÍA ${fechaMax.toLocaleDateString("es-CL")}`;
+const fechas = datos
+  .map(f => f[IDX.DIA])
+  .filter(f => f && !f.toLowerCase().includes("total"))
+  .map(parseFechaLatam)
+  .filter(f => f instanceof Date && !isNaN(f));
+
+const fechaMax = new Date(Math.max(...fechas));
+
+document.getElementById("fechaActualizacion").textContent =
+  `DATOS ACTUALIZADOS AL DÍA ${fechaMax.toLocaleDateString("es-CL")}`;
+
 
   const thead=document.querySelector("thead");
   const tbody=document.querySelector("tbody");
@@ -184,3 +194,4 @@ fetch(url)
 
 </body>
 </html>
+
