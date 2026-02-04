@@ -107,9 +107,16 @@ const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTv__z4dmUZOol3wAk_
 fetch(url)
 .then(res => res.text())
 .then(data => {
+
   const filas = data.trim().split("\n").map(f => f.split(","));
   const encabezados = filas[0];
   const datos = filas.slice(1);
+
+  const IDX = {
+    DIA: encabezados.indexOf("DIA"),
+    SEMANA: encabezados.indexOf("SEMANA"),
+    MES: encabezados.indexOf("MES")
+  };
 
   const thead = document.querySelector("thead");
   const tbody = document.querySelector("tbody");
@@ -117,140 +124,138 @@ fetch(url)
   thead.innerHTML = "<tr>" + encabezados.map(h => `<th>${h}</th>`).join("") + "</tr>";
 
   // llenar meses
-  const mesesUnicos = [...new Set(datos.map(f => f[encabezados.indexOf("MES")]))];
+  const mesesUnicos = [...new Set(datos.map(f => f[IDX.MES]))];
   const mesSelect = document.getElementById("mesFiltro");
   mesesUnicos.forEach(m=>{
     let op=document.createElement("option");
-    op.value=m; op.textContent=m;
+    op.value=m;
+    op.textContent=m;
     mesSelect.appendChild(op);
   });
 
-function reglaPorColumna(encabezado, valor){
-  if(!valor.includes("%")) return "";
-  const num = parseFloat(valor.replace("%","").trim());
+  function reglaPorColumna(encabezado, valor){
+    if(!valor.includes("%")) return "";
+    const num = parseFloat(valor.replace("%","").trim());
 
-  const reglas = {
-    "% FCR 1dia": 90,
-    "%FCR 7dia": 90,
-    "% Adher General": 80,
-    "% Descto": 80,
-    "% Rein.": 5,
-    "% Ef. BAF": 80,
-    "% Argumentario": 23,
-    "% Oferta": 80,
-    "% Adh Capl": 25,
-    "%adh Oferta 0": 20,
-    "%adh Oferta 1": 12,
-    "%adh Oferta 2": 23,
-    "%adh Oferta 3": 55,
-    "% VS Atendidas": 90,
-    "% Baja Parc.": 4,
-    "% Short Call": 5,
-    "% Transf.": 10
-  };
+    const reglas = {
+      "% FCR 1dia": 90,
+      "%FCR 7dia": 90,
+      "% Adher General": 80,
+      "% Descto": 80,
+      "% Rein.": 5,
+      "% Ef. BAF": 80,
+      "% Argumentario": 23,
+      "% Oferta": 80,
+      "% Adh Capl": 25,
+      "%adh Oferta 0": 20,
+      "%adh Oferta 1": 12,
+      "%adh Oferta 2": 23,
+      "%adh Oferta 3": 55,
+      "% VS Atendidas": 90,
+      "% Baja Parc.": 4,
+      "% Short Call": 5,
+      "% Transf.": 10
+    };
 
-  let meta = reglas[encabezado] ?? 85;
+    let meta = reglas[encabezado] ?? 85;
 
-  const menosEsMejor = ["% Short Call","% Transf.","% Adh Capl","% Rein.","%adh Oferta 0","% Baja Parc.","% Argumentario","%adh Oferta 1","%adh Oferta 2","%adh Oferta 3"];
+    const menosEsMejor = ["% Short Call","% Transf.","% Adh Capl","% Rein.","%adh Oferta 0","% Baja Parc.","% Argumentario","%adh Oferta 1","%adh Oferta 2","%adh Oferta 3"];
 
-  if(menosEsMejor.includes(encabezado)){
-    if(num <= meta) return "kpi-verde";
-    if(num <= meta + 5) return "kpi-amarillo";
+    if(menosEsMejor.includes(encabezado)){
+      if(num <= meta) return "kpi-verde";
+      if(num <= meta + 5) return "kpi-amarillo";
+      return "kpi-rojo";
+    }
+
+    if(num >= meta) return "kpi-verde";
+    if(num >= meta - 10) return "kpi-amarillo";
     return "kpi-rojo";
   }
 
-  if(num >= meta) return "kpi-verde";
-  if(num >= meta - 10) return "kpi-amarillo";
-  return "kpi-rojo";
-}
+  function calcularResumen(filas){
+    const resumen={}, cont={};
 
-function calcularResumen(filas){
-  const resumen={}, cont={};
-
-  filas.forEach(f=>{
-    f.forEach((c,i)=>{
-      if(c.includes("%")){
-        const n=parseFloat(c.replace("%",""));
-        if(!isNaN(n)){
-          const h=encabezados[i];
-          resumen[h]=(resumen[h]||0)+n;
-          cont[h]=(cont[h]||0)+1;
+    filas.forEach(f=>{
+      f.forEach((c,i)=>{
+        if(c.includes("%")){
+          const n=parseFloat(c.replace("%",""));
+          if(!isNaN(n)){
+            const h=encabezados[i];
+            resumen[h]=(resumen[h]||0)+n;
+            cont[h]=(cont[h]||0)+1;
+          }
         }
-      }
+      });
     });
-  });
 
-  let html="<b>📊 Resumen KPI</b><br>";
-  for(let k in resumen){
-    const prom=(resumen[k]/cont[k]).toFixed(1)+"%";
-    const clase=reglaPorColumna(k,prom);
-    html+=`<span class="${clase}" style="padding:6px 10px;margin:4px;display:inline-block;border-radius:6px;">
-      ${k}: <b>${prom}</b></span>`;
+    let html="<b>📊 Resumen KPI</b><br>";
+    for(let k in resumen){
+      const prom=(resumen[k]/cont[k]).toFixed(1)+"%";
+      const clase=reglaPorColumna(k,prom);
+      html+=`<span class="${clase}" style="padding:6px 10px;margin:4px;display:inline-block;border-radius:6px;">
+        ${k}: <b>${prom}</b></span>`;
+    }
+    document.getElementById("resumenKPI").innerHTML=html;
   }
-  document.getElementById("resumenKPI").innerHTML=html;
-}
 
-function render(filtrado){
-  tbody.innerHTML="";
-  filtrado.forEach(fila=>{
-    let tr="<tr>";
-    fila.forEach((c,i)=>{
-      tr+=`<td class="${reglaPorColumna(encabezados[i],c)}">${c}</td>`;
+  function render(filtrado){
+    tbody.innerHTML="";
+    const fragment = document.createDocumentFragment();
+
+    filtrado.forEach(fila=>{
+      const tr=document.createElement("tr");
+      fila.forEach((c,i)=>{
+        const td=document.createElement("td");
+        td.textContent=c;
+        td.className=reglaPorColumna(encabezados[i],c);
+        tr.appendChild(td);
+      });
+      fragment.appendChild(tr);
     });
-    tr+="</tr>";
-    tbody.innerHTML+=tr;
-  });
-  calcularResumen(filtrado);
-}
-// aplicamos filtros
-function aplicarFiltros(){
-  const texto = filtro.value.toLowerCase();
-  const vista = vistaSel.value;
-  const mesElegido = mesSel.value;
 
-  const resultado = datos.filter(f => {
+    tbody.appendChild(fragment);
+    calcularResumen(filtrado);
+  }
 
-    const colDia = f[encabezados.indexOf("DIA")];
-    const colSemana = f[encabezados.indexOf("SEMANA")];
-    const colMes = f[encabezados.indexOf("MES")];
+  function aplicarFiltros(){
+    const texto = filtro.value.toLowerCase();
+    const vista = vistaSel.value;
+    const mesElegido = mesSel.value;
 
-    // Filtro por mes elegido
-    if(mesElegido && !colMes.includes(mesElegido)) return false;
+    const resultado = datos.filter(f=>{
+      const colDia = f[IDX.DIA];
+      const colSemana = f[IDX.SEMANA];
+      const colMes = f[IDX.MES];
 
-    // Vista diaria → solo cuando DIA tiene número real
-    if(vista === "dia"){
-      if(colDia.includes("Total")) return false;
-    }
+      if(mesElegido && !colMes.includes(mesElegido)) return false;
 
-    // Vista semanal → cuando SEMANA tiene Total Semana
-    if(vista === "semana"){
-      if(!colSemana.includes("Total Semana")) return false;
-    }
+      if(vista === "dia" && colDia.includes("Total")) return false;
+      if(vista === "semana" && !colSemana.includes("Total Semana")) return false;
+      if(vista === "mes" && !colMes.includes("Total")) return false;
 
-    // Vista mensual → cuando MES tiene Total
-    if(vista === "mes"){
-      if(!colMes.includes("Total")) return false;
-    }
+      return f.some(c => c.toLowerCase().includes(texto));
+    });
 
-    // Buscador libre
-    return f.some(c => c.toLowerCase().includes(texto));
-  });
+    render(resultado);
+  }
 
-  render(resultado);
-}
+  function debounce(fn, delay=300){
+    let t;
+    return (...args)=>{
+      clearTimeout(t);
+      t=setTimeout(()=>fn.apply(this,args),delay);
+    };
+  }
 
+  const filtro=document.getElementById("filtro");
+  const vistaSel=document.getElementById("vista");
+  const mesSel=document.getElementById("mesFiltro");
 
-  
+  filtro.addEventListener("keyup", debounce(aplicarFiltros,300));
+  vistaSel.addEventListener("change", aplicarFiltros);
+  mesSel.addEventListener("change", aplicarFiltros);
 
-const filtro=document.getElementById("filtro");
-const vistaSel=document.getElementById("vista");
-const mesSel=document.getElementById("mesFiltro");
-
-filtro.addEventListener("keyup", aplicarFiltros);
-vistaSel.addEventListener("change", aplicarFiltros);
-mesSel.addEventListener("change", aplicarFiltros);
-
-render(datos);
+  render(datos);
 });
 </script>
 
