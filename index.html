@@ -18,6 +18,19 @@ input,select{padding:10px;margin:8px 5px;border-radius:6px;border:1px solid #ccc
 table{border-collapse:collapse;width:100%;font-size:12px;}
 th{background:#34495e;color:white;padding:10px;position:sticky;top:0;z-index:2;}
 td{padding:8px;text-align:center;border-bottom:1px solid #eee;}
+
+td, th {
+  white-space: nowrap;      
+  text-overflow: ellipsis;    
+  overflow: hidden;
+}
+
+th:nth-child(2), td:nth-child(2) { 
+  min-width: 120px;
+  text-align: left;  
+}
+
+  
 tr:nth-child(even){background:#f9fbfd;}
 tr:hover{background:#e8f4ff;}
 .kpi-verde{background:#d4edda;color:#155724;font-weight:bold;}
@@ -205,5 +218,6 @@ document.getElementById("fechaActualizacion").textContent =
 
 </body>
 </html>
+
 
 
