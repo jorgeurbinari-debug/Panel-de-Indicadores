@@ -24,12 +24,19 @@ tr:hover{background:#e8f4ff;}
 .kpi-amarillo{background:#fff3cd;color:#856404;font-weight:bold;}
 .kpi-rojo{background:#f8d7da;color:#721c24;font-weight:bold;}
 #resumenKPI{background:white;padding:12px;border-radius:10px;margin-bottom:10px;box-shadow:0 4px 10px rgba(0,0,0,0.1);font-size:12px;}
+#fechaActualizacion{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:10px;
+  color:#2c3e50;
+}
 </style>
 </head>
 
 <body>
 
 <h2>📊 Panel de Indicadores</h2>
+<div id="fechaActualizacion"></div>
 
 <div class="controles">
   <input type="text" id="filtro" placeholder="Buscar...">
@@ -87,6 +94,16 @@ fetch(url)
     SEMANA: encabezados.indexOf("SEMANA"),
     MES: encabezados.indexOf("MES")
   };
+
+  /* ===== FECHA MÁS RECIENTE ===== */
+  const fechas = datos
+    .map(f => f[IDX.DIA])
+    .filter(f => f && !f.toLowerCase().includes("total"))
+    .map(f => new Date(f));
+
+  const fechaMax = new Date(Math.max(...fechas));
+  document.getElementById("fechaActualizacion").textContent =
+    `DATOS ACTUALIZADOS AL DÍA ${fechaMax.toLocaleDateString("es-CL")}`;
 
   const thead=document.querySelector("thead");
   const tbody=document.querySelector("tbody");
