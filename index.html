@@ -97,10 +97,20 @@ fetch(url)
 
   /* ===== FECHA MÁS RECIENTE ===== */
 function parseFechaLatam(fechaStr){
-  // Espera formato dd/mm/yyyy
-  const partes = fechaStr.split("/");
+  if(!fechaStr) return null;
+
+  // Acepta dd/mm/yyyy o dd-mm-yyyy
+  const partes = fechaStr.includes("/")
+    ? fechaStr.split("/")
+    : fechaStr.split("-");
+
   if(partes.length !== 3) return null;
-  return new Date(partes[2], partes[1]-1, partes[0]);
+
+  const dia = parseInt(partes[0],10);
+  const mes = parseInt(partes[1],10) - 1;
+  const anio = parseInt(partes[2],10);
+
+  return new Date(anio, mes, dia);
 }
 
 const fechas = datos
@@ -113,6 +123,7 @@ const fechaMax = new Date(Math.max(...fechas));
 
 document.getElementById("fechaActualizacion").textContent =
   `DATOS ACTUALIZADOS AL DÍA ${fechaMax.toLocaleDateString("es-CL")}`;
+
 
 
   const thead=document.querySelector("thead");
@@ -194,4 +205,5 @@ document.getElementById("fechaActualizacion").textContent =
 
 </body>
 </html>
+
 
