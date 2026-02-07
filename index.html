@@ -43,6 +43,31 @@ tr:hover{background:#e8f4ff;}
   margin-bottom:10px;
   color:#2c3e50;
 }
+/* Ocultar columnas Representante(DNI) y Lider */
+th:nth-child(1),
+td:nth-child(1),
+th:nth-child(3),
+td:nth-child(3) {
+  display: none;
+}
+  
+/* Congelar columna RAC */
+th:nth-child(2),
+td:nth-child(2) {
+  position: sticky;
+  left: 0;
+  background: white;
+  z-index: 3;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+/* Encabezado RAC por encima del resto */
+th:nth-child(2) {
+  z-index: 4;
+  background: #34495e;
+}
+
+  
 </style>
 </head>
 
@@ -218,6 +243,7 @@ document.getElementById("fechaActualizacion").textContent =
 
 </body>
 </html>
+
 
 
 
