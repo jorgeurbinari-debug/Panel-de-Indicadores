@@ -183,9 +183,9 @@ document.getElementById("fechaActualizacion").textContent =
     const n=parseFloat(v.replace("%",""));
     if(isNaN(n)) return "";
 
-    const reglas={"% FCR 1dia":90,"%FCR 7dia":90,"% Adher General":80,"% Descto":80,"% Rein.":5,"% Ef. BAF":80,"% Argumentario":23,"% Oferta":80,"% Adh Capl":25,"%adh Oferta 0":20,"%adh Oferta 1":12,"%adh Oferta 2":23,"%adh Oferta 3":55,"% VS Atendidas":90,"% Baja Parc.":4,"% Short Call":5,"% Transf.":10};
+    const reglas={"% FCR 1dia":90,"%FCR 7dia":90,"% Adher General":80,"% Descto":80,"% Rein.":5,"% Ef. BAF":80,"% Argumentario":23,"% Oferta":80,"% Adh Capl":25,"%adh Oferta 0":20,"%adh Oferta 1":12,"%adh Oferta 2":23,"%adh Oferta 3":55,"% VS Atendidas":90,"% Baja Parc.":4,"% Short Call":5,"% Transf.":10,"% Baja Parc. IPTV":4,"% Corte rac":1};
     const meta=reglas[h] ?? 85;
-    const menos=["% Short Call","% Transf.","% Adh Capl","% Rein.","%adh Oferta 0","% Baja Parc.","% Argumentario","%adh Oferta 1","%adh Oferta 2","%adh Oferta 3","% Baja Parc. IPTV 4","% Corte rac 1"];
+    const menos=["% Short Call","% Transf.","% Adh Capl","% Rein.","%adh Oferta 0","% Baja Parc.","% Argumentario","%adh Oferta 1","%adh Oferta 2","%adh Oferta 3","% Baja Parc. IPTV","% Corte rac"];
 
     if(menos.includes(h)){
       if(n<=meta) return "kpi-verde";
@@ -252,6 +252,7 @@ aplicarFiltros();
 
 </body>
 </html>
+
 
 
 
