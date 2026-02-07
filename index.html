@@ -240,16 +240,19 @@ document.getElementById("fechaActualizacion").textContent =
   const filtro=document.getElementById("filtro");
   const vistaSel=document.getElementById("vista");
 
-  filtro.addEventListener("keyup",debounce(aplicarFiltros));
-  vistaSel.addEventListener("change",aplicarFiltros);
-  mesSel.addEventListener("change",aplicarFiltros);
+filtro.addEventListener("keyup",debounce(aplicarFiltros));
+vistaSel.addEventListener("change",aplicarFiltros);
+mesSel.addEventListener("change",aplicarFiltros);
 
-  render(datos);
+aplicarFiltros();
+
+
 });
 </script>
 
 </body>
 </html>
+
 
 
 
