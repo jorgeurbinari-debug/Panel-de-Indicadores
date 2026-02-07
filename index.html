@@ -185,7 +185,7 @@ document.getElementById("fechaActualizacion").textContent =
 
     const reglas={"% FCR 1dia":90,"%FCR 7dia":90,"% Adher General":80,"% Descto":80,"% Rein.":5,"% Ef. BAF":80,"% Argumentario":23,"% Oferta":80,"% Adh Capl":25,"%adh Oferta 0":20,"%adh Oferta 1":12,"%adh Oferta 2":23,"%adh Oferta 3":55,"% VS Atendidas":90,"% Baja Parc.":4,"% Short Call":5,"% Transf.":10};
     const meta=reglas[h] ?? 85;
-    const menos=["% Short Call","% Transf.","% Adh Capl","% Rein.","%adh Oferta 0","% Baja Parc.","% Argumentario","%adh Oferta 1","%adh Oferta 2","%adh Oferta 3"];
+    const menos=["% Short Call","% Transf.","% Adh Capl","% Rein.","%adh Oferta 0","% Baja Parc.","% Argumentario","%adh Oferta 1","%adh Oferta 2","%adh Oferta 3","% Baja Parc. IPTV 4","% Corte rac 1"];
 
     if(menos.includes(h)){
       if(n<=meta) return "kpi-verde";
@@ -221,7 +221,14 @@ document.getElementById("fechaActualizacion").textContent =
 
     render(datos.filter(f=>{
       if(m && f[IDX.MES]!==m) return false;
-      if(v==="dia" && f[IDX.DIA].includes("Total")) return false;
+      if(v==="dia"){
+        if(!f[IDX.DIA]) return false;
+        if(f[IDX.DIA].toLowerCase().includes("total")) return false;
+        if(f[IDX.SEMANA]?.toLowerCase().includes("total")) return false;
+        if(f[IDX.MES]?.toLowerCase().includes("total")) return false;
+          }
+
+      
       if(v==="semana" && !f[IDX.SEMANA].includes("Total Semana")) return false;
       if(v==="mes" && !f[IDX.MES].includes("Total")) return false;
       return f.join(" ").toLowerCase().includes(t);
@@ -243,6 +250,7 @@ document.getElementById("fechaActualizacion").textContent =
 
 </body>
 </html>
+
 
 
 
